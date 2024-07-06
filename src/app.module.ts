@@ -1,10 +1,26 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ConfigModule } from '@nestjs/config';
+import { validate } from './config';
+import { LoggerModule } from 'nestjs-pino';
+import pino from 'pino';
+import { MemberModule } from './modules/member.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot({
+      validate: validate,
+      isGlobal: true,
+    }),
+    LoggerModule.forRoot({
+      pinoHttp: {
+        stream: pino.destination({
+          dest: 'logs/app.log',
+          sync: false,
+          mkdir: true,
+        }),
+      },
+    }),
+    MemberModule,
+  ],
 })
 export class AppModule {}
