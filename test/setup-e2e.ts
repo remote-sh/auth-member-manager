@@ -1,4 +1,4 @@
-import { member, profile } from '@prisma/client';
+import { member, profile, provider } from '@prisma/client';
 import {
   PostgreSqlContainer,
   StartedPostgreSqlContainer,
@@ -59,6 +59,9 @@ const createTestMember = async (email: string): Promise<member> => {
   );
   await postgresClient.query<profile>(
     `INSERT INTO "member"."profile" (user_id, nickname, image_url) VALUES (${member.rows[0].id} , 'test', 'test')`,
+  );
+  await postgresClient.query<provider>(
+    `INSERT INTO "auth"."provider" (user_id, provider) VALUES (${member.rows[0].id} , 'google')`,
   );
   return member.rows[0];
 };

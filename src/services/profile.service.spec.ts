@@ -1,4 +1,4 @@
-import { PrismaClient, profile } from '@prisma/client';
+import { PrismaClient, profile, provider, provider_type } from '@prisma/client';
 import { PrismaService } from './prisma.service';
 import { ProfileService } from './profile.service';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
@@ -17,6 +17,11 @@ describe('ProfileService', () => {
     image_url: 'test',
     join_date: new Date(),
     update_date: new Date(),
+  };
+  const provider: provider = {
+    id: 1,
+    user_id: 1,
+    provider: provider_type.google,
   };
 
   beforeEach(async () => {
@@ -50,12 +55,19 @@ describe('ProfileService', () => {
     it('should return a profile', async () => {
       // Mock findUnique
       prismaMock.profile.findUnique.mockResolvedValue(profile);
+      prismaMock.provider.findUnique.mockResolvedValue(provider);
 
       // Call getProfile
       const result = await service.getProfile(1);
 
       // Check result
-      expect(result).toEqual(profile);
+      expect(result).toEqual({
+        nickname: 'test',
+        image_url: 'test',
+        join_date: profile.join_date,
+        update_date: profile.update_date,
+        provider: provider.provider,
+      });
     });
   });
 
