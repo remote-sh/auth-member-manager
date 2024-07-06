@@ -53,13 +53,14 @@ jest.setTimeout(10000);
 
 export { postgresClient, prismaService };
 
-const createTestMember = async (email: string) => {
+const createTestMember = async (email: string): Promise<member> => {
   const member = await postgresClient.query<member>(
-    `INSERT INTO "member"."member" (email) VALUES ('${email}') RETURNING id`,
+    `INSERT INTO "member"."member" (email) VALUES ('${email}') RETURNING *`,
   );
   await postgresClient.query<profile>(
     `INSERT INTO "member"."profile" (user_id, nickname, image_url) VALUES (${member.rows[0].id} , 'test', 'test')`,
   );
+  return member.rows[0];
 };
 
 export { createTestMember };

@@ -5,6 +5,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { PinoLogger } from 'nestjs-pino';
 import { MemberService } from 'src/services/member.service';
@@ -21,6 +22,9 @@ export class MemberGuard implements CanActivate {
     try {
       const request = context.switchToHttp().getRequest<IMemberRequest>();
       const uuid = request.headers['x-uuid'] as string;
+      if (!uuid) {
+        throw new UnauthorizedException('UUID not provided');
+      }
       const targetMember = await this.memberService.getMember(uuid);
       if (!targetMember) {
         throw new NotFoundException('Member not found');
