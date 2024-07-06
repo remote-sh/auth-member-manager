@@ -13,7 +13,7 @@ import { MemberGuard } from 'src/guard/member.guard';
 import { TypiaValidationPipe } from 'src/pipes/validation.pipe';
 import { ProfileService } from 'src/services/profile.service';
 import { IUpdateMemberBody } from 'src/types/profile';
-import { ReplyData } from 'src/types/response';
+import { IResponseMemberData, IReplyData } from 'src/types/response';
 import { validateUpdateMemberBody } from 'src/validates/body.validate';
 
 @Controller('member')
@@ -29,12 +29,18 @@ export class MemberController {
   ) {
     const profile = await this.profileService.getProfile(userId);
 
-    const reply: ReplyData = {
+    const data: IResponseMemberData = {
+      email,
+      imageUrl: profile.image_url,
+      nickname: profile.nickname,
+      joinDate: profile.join_date,
+      updateDate: profile.update_date,
+      provider: profile.provider,
+    };
+
+    const reply: IReplyData = {
       message: 'Profile retrieved',
-      data: {
-        email,
-        ...profile,
-      },
+      data,
     };
 
     return reply;
@@ -55,7 +61,7 @@ export class MemberController {
       await this.profileService.updateAvatar(userId, body.imageUrl);
     }
 
-    const reply: ReplyData = {
+    const reply: IReplyData = {
       message: 'Profile updated',
     };
 
