@@ -21,14 +21,6 @@ export function validate(raw: Record<string, unknown>): Env {
       secret: raw.GATEWAY_SECRET as Env['gateway']['secret'],
     },
     services: {
-      auth: {
-        status: parseBoolean(
-          raw.AUTH_SERVICE_STATUS as string,
-        ) as Env['services']['auth']['status'],
-        api: {
-          url: raw.AUTH_SERVICE_API_URL as Env['services']['auth']['api']['url'],
-        },
-      },
       cloud: {
         status: parseBoolean(
           raw.CLOUD_SERVICE_STATUS as string,

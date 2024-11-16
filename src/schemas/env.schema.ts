@@ -10,12 +10,6 @@ export const EnvSchema = z.object({
     url: z.string(),
   }),
   services: z.object({
-    auth: z.object({
-      status: z.boolean().default(true),
-      api: z.object({
-        url: z.string(),
-      }),
-    }),
     cloud: z.object({
       status: z.boolean().default(true),
       api: z.object({

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package cloud;
+
+service CloudService {
+  rpc GetServiceStatus(GetServiceStatusByUUID) returns (ServiceStatus) {}
+}
+
+message GetServiceStatusByUUID {
+  string uuid = 1;
+}
+
+message ServiceStatus {
+  bool is_active = 1;
+}
