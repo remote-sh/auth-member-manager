@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { validate } from './config';
 import { LoggerModule } from 'nestjs-pino';
 import pino from 'pino';
 import { MemberModule } from './modules/member.module';
+import { validate } from './config/env.config';
 
 @Module({
   imports: [
