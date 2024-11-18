@@ -8,9 +8,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PinoLogger } from 'nestjs-pino';
+import { MemberRequest } from 'src/interfaces/request';
 import { MemberService } from 'src/services/member.service';
-import { IMemberRequest } from 'src/types/request';
 
+/**
+ * Get existing member from passed member uuid key
+ * @function canActivate - validate context function
+ */
 @Injectable()
 export class MemberGuard implements CanActivate {
   constructor(
@@ -20,7 +24,7 @@ export class MemberGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     try {
-      const request = context.switchToHttp().getRequest<IMemberRequest>();
+      const request = context.switchToHttp().getRequest<MemberRequest>();
       const uuid = request.headers['x-uuid'] as string;
       if (!uuid) {
         throw new UnauthorizedException('UUID not provided');

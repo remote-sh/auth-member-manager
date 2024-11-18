@@ -8,13 +8,12 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { provider_type } from '@prisma/client';
 import { GatewayGuard } from 'src/guard/gateway.guard';
 import { MemberGuard } from 'src/guard/member.guard';
-import { TypiaValidationPipe } from 'src/pipes/validation.pipe';
+import { UpdateMemberBody } from 'src/interfaces/member/update';
+import { CustomResponse } from 'src/interfaces/response';
 import { ProfileService } from 'src/services/profile.service';
-import { IUpdateMemberBody } from 'src/types/profile';
-import { IResponseMemberData, IReplyData } from 'src/types/response';
-import { validateUpdateMemberBody } from 'src/validates/body.validate';
 
 @Controller('member')
 @UseGuards(GatewayGuard, MemberGuard)
@@ -29,18 +28,23 @@ export class MemberController {
   ) {
     const profile = await this.profileService.getProfile(userId);
 
-    const data: IResponseMemberData = {
-      email,
-      imageUrl: profile.image_url,
-      nickname: profile.nickname,
-      joinDate: profile.join_date,
-      updateDate: profile.update_date,
-      provider: profile.provider,
-    };
-
-    const reply: IReplyData = {
+    const reply: CustomResponse<{
+      email: string;
+      imageUrl: string | null;
+      nickname: string;
+      joinDate: Date;
+      updateDate: Date;
+      provider: provider_type;
+    }> = {
       message: 'Profile retrieved',
-      data,
+      data: {
+        email,
+        imageUrl: profile.image_url,
+        nickname: profile.nickname,
+        joinDate: profile.join_date,
+        updateDate: profile.update_date,
+        provider: profile.provider,
+      },
     };
 
     return reply;
@@ -50,8 +54,7 @@ export class MemberController {
   @HttpCode(200)
   async updateProfile(
     @Query('userId', ParseIntPipe) userId: number,
-    @Body(new TypiaValidationPipe(validateUpdateMemberBody))
-    body: IUpdateMemberBody,
+    @Body() body: UpdateMemberBody,
   ) {
     if (body.nickname) {
       await this.profileService.updateNickname(userId, body.nickname);
@@ -61,8 +64,9 @@ export class MemberController {
       await this.profileService.updateAvatar(userId, body.imageUrl);
     }
 
-    const reply: IReplyData = {
+    const reply: CustomResponse = {
       message: 'Profile updated',
+      data: undefined,
     };
 
     return reply;

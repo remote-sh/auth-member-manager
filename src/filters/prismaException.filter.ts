@@ -1,25 +1,22 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { Request, Response } from 'express';
-import { IExceptionResponseData } from 'src/types/exception';
+import { Response } from 'express';
+import { CustomErrorResponse } from 'src/interfaces/response';
 
 @Catch(PrismaClientKnownRequestError)
 export class PrismaExceptionFilter implements ExceptionFilter {
   catch(exception: PrismaClientKnownRequestError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
     const status = 500;
-    // const message = 'Internal server error';
     const message = exception.message;
-    const name = 'PrismaClientKnownRequestError';
+    const name = exception.name;
 
-    const errorResponse: IExceptionResponseData = {
-      statusCode: status,
-      error: name,
+    const errorResponse: CustomErrorResponse = {
       message: message,
-      path: request.url,
-      timestamp: new Date().toISOString(),
+      data: {
+        name: name,
+      },
     };
 
     response.status(status).json(errorResponse);

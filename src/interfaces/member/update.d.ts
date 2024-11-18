@@ -1,4 +1,4 @@
-export interface IUpdateMemberBody {
+export interface UpdateMemberBody {
   nickname?: string;
   imageUrl?: string;
 }
