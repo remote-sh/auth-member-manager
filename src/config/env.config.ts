@@ -1,6 +1,9 @@
 import { Env, EnvSchema } from 'src/schemas/env.schema';
 
-const parseBoolean = (value: string | undefined): boolean => {
+const parseBoolean = (value: string | undefined): boolean | undefined => {
+  if (!value) {
+    return undefined;
+  }
   if (value === 'true' || value === '1' || value === 'yes' || value === 'on') {
     return true;
   }
